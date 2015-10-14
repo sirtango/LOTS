@@ -7,7 +7,7 @@ var go = {
   map_size: 19,
   square_size: 40,
 
-  img_route: '/SirGo/assets/img/',
+  img_route: '/LOTS/assets/img/',
   background: {
   	top: 'square_top.png',
   	bottom: 'square_bottom.png',
@@ -96,7 +96,7 @@ var go = {
   },
 
   set_coordinates: function() {
-  // sets the coordinates as properties into each div
+  // sets the coordinates as properties into each div element
     for (var x=0; x<this.map_size; x++) {
       for (var y=0; y<this.map_size; y++) {
         this.map[x][y].coord_x = x;

@@ -13,8 +13,9 @@ go.move = function()
   	  	// first move
   	  		console.log('first move');
   	    }
-  		stone.src = go.img_route + go.stone.black;
-  		this.appendChild(stone);
+        
+    		stone.src = go.img_route + go.stone.black;
+    		this.appendChild(stone);
 
   	  	this.player = 'B';
   	  	go.moves_log.push(this.player + ',' + this.coord_x + ',' + this.coord_y);
