@@ -1,0 +1,8 @@
+---
+
+- hosts: all
+  tasks:
+    - apt_repository: repo="deb http://packages.dotdeb.org {{ ansible_distribution_release }}-php56 all" state=present
+    - apt_key: url='http://www.dotdeb.org/dotdeb.gpg'
+    - apt: name={{ item }} update_cache=yes state=latest
+      with_items: [php5-cli, php5-curl, php5-sqlite, sqlite3]
