@@ -1,5 +1,4 @@
-# LOTS
-The Lord of the Stones
-----------------------
+LOTS: The Lord of the Stones
+----------------------------
 
-One stone to rule them all
+One stone to rule them all.
