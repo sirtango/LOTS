@@ -1,7 +1,7 @@
 <?php
 
 class WebTestCase extends PHPUnit_Framework_TestCase {
-    protected $base_url = 'http://localhost/test.php';
+    protected $base_url = 'http://localhost';
 
     protected function request($path, $data=null, array $headers=null) {
         if (!extension_loaded('curl')) {
