@@ -1,13 +1,11 @@
-
 var go = {
   board: document.getElementById('board'),
-  responsive: null, // if not responsive set to null, else set in %
+  responsive: 60, // if not responsive set to null
 
   map: [],
-  map_size: 19,
+  map_size: 9,
   square_size: 40,
-
-  img_route: '/LOTS/public/assets/img/',
+  img_route: '../public/assets/img/',
   background: {
     top: 'square_top.png',
     bottom: 'square_bottom.png',
@@ -22,7 +20,9 @@ var go = {
   },
   stone: {
     black: 'b_stone.png',
-    white: 'w_stone.png'
+    white: 'w_stone.png',
+    black_shadow: 'b_stone_fade.png',
+    white_shadow: 'w_stone_fade.png'
   },
 
   set_board_width: function() {
@@ -35,29 +35,29 @@ var go = {
       // Responsive width. Builds the map according to the board width defined in %
       this.board.style.width = this.responsive + '%';
     
-    // reduce offset width according to map size
-    var reduce_offset;
+      // reduce offset width according to map size
+      var reduce_offset;
 
-    switch (this.map_size) {
-      case 19: reduce_offset = 0.5;
-      break;
-      case 13: reduce_offset = 1;
-      break;
-      case 9: reduce_offset = 2;
-      break;
-      default: reduce_offset = 1;
-    }
-      
-    var square_size = Math.floor(this.board.offsetWidth/this.map_size) - reduce_offset;
-
-    // set inner squares width and height
-    for (var x=0; x<this.map_size; x++) {
-      this.map[x].style.width = square_size + 'px';
-      for (var y=0; y<this.map_size; y++) {        
-        this.map[x][y].style.width = 100 + '%';
-          this.map[x][y].style.height = square_size + 'px';                
+      switch (this.map_size) {
+        case 19: reduce_offset = 0.5;
+        break;
+        case 13: reduce_offset = 1;
+        break;
+        case 9: reduce_offset = 2;
+        break;
+        default: reduce_offset = 1;
       }
-    }
+        
+      var square_size = Math.floor(this.board.offsetWidth/this.map_size) - reduce_offset;
+
+      // set inner squares width and height
+      for (var x=0; x<this.map_size; x++) {
+        this.map[x].style.width = square_size + 'px';
+        for (var y=0; y<this.map_size; y++) {        
+          this.map[x][y].style.width = 100 + '%';
+            this.map[x][y].style.height = square_size + 'px';                
+        }
+      }
     }
     
   },
