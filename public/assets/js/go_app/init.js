@@ -1,9 +1,9 @@
 var go = {
   board: document.getElementById('board'),
-  responsive: 60, // if not responsive set to null
+  responsive: false, // if not responsive set to false
 
   map: [],
-  map_size: 9,
+  map_size: 19,
   square_size: 40,
   img_route: '../public/assets/img/',
   background: {
@@ -27,7 +27,7 @@ var go = {
 
   set_board_width: function() {
 
-    if (this.responsive == null) {
+    if (!this.responsive) {
       // Static width. Inner board divs width and height must be defined through css in px.
       this.board.style.width = this.map_size * this.square_size +'px';  
     }
@@ -55,7 +55,7 @@ var go = {
         this.map[x].style.width = square_size + 'px';
         for (var y=0; y<this.map_size; y++) {        
           this.map[x][y].style.width = 100 + '%';
-            this.map[x][y].style.height = square_size + 'px';                
+          this.map[x][y].style.height = square_size + 'px';                
         }
       }
     }
