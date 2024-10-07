@@ -21,8 +21,15 @@ var go = {
   stone: {
     black: 'b_stone.png',
     white: 'w_stone.png',
+    quantum: 'q_stone.gif',
     black_shadow: 'b_stone_fade.png',
     white_shadow: 'w_stone_fade.png'
+  },
+
+  quantum: {
+    active: true,
+    stones: 4,
+    probability: 0.5,
   },
 
   set_board_width: function() {

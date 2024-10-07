@@ -69,6 +69,10 @@ go.generate_state = function()
           // black stone
           state += 'B';
         break;
+        case 'Q':
+          // quantum stone
+          state += 'Q';
+        break;
         default:
           // empty
           state += 'E';
@@ -89,12 +93,11 @@ go.ko = function()
     ko = true;
   }
 
-  console.log(ko);
   return ko;
 }
 
 
-go.back = function()
+go.refresh = function()
 {
   go.clean_board();
   go.draw_state(go.board_states[go.board_states.length - 1]);
@@ -116,8 +119,6 @@ go.clean_board = function()
 }
 
 go.draw_state = function(state) {
-  console.log(state);
-  
   var count = 0;
   for (var x=0; x<this.map_size; x++) {
     for (var y=0; y<this.map_size; y++) {
@@ -127,18 +128,20 @@ go.draw_state = function(state) {
       switch(state[count]) {
         case 'B':
           // draw black stone
-          console.log('B');
           square.state = 'B';
-          go.append_stone('B', square);
+          go.append_stone(square);
         break;
         case 'W':
           // draw white stone
-          console.log('W');
           square.state = 'W';
-          go.append_stone('W', square);
+          go.append_stone(square);
+        break;
+        case 'Q':
+          // draw a stone in a quantum state
+          square.state = 'Q';
+          go.append_stone(square);
         break;
         case 'E':
-          console.log('E');
           // it's empty, do nothing
         break;
       }
@@ -146,6 +149,27 @@ go.draw_state = function(state) {
       count++;
     }
   }
+}
+
+go.get_new_state = function(square) {
+  if (go.quantum.active) {
+    var siblings = go.get_siblings(square);
+    var touching = false;
+
+    for (var sibling of siblings) {
+      // we will only allow stones in superposition when they are not in contact with any other stone
+      if (sibling.state) {
+        touching = true;
+        break;
+      }
+    }
+
+    if (!touching && Math.random() <= go.quantum.probability) {
+      return 'Q';
+    }
+  }
+
+  return go.player;
 }
 
 go.move = function()
@@ -158,32 +182,48 @@ go.move = function()
         var square = this;
 
         if(!square.state) {
+          var history_changed = false;
 
           // add state to square
-          square.state = go.player;
+          square.state = go.get_new_state(square);
 
+          if (go.quantum.active) {
+            history_changed = go.collapse_quantum_siblings(square);
+          }
+
+          // check suicide
+          if (go.group_is_dead(square, false)) {
+            square.state = false;
+            if (history_changed) {
+              go.log(square);
+              go.board_states.push(go.generate_state());
+            }
+            go.refresh();
+            return;
+          }
+
+          // remove stones surronded
           go.kill(square);
 
           // check if there's ko
           if(go.ko()) {
             square.state = false;
-            go.back();
-            return;
-          }
-
-          // check suicide
-          if(go.group_is_dead(square, false)) {
-            square.state = false;
+            go.log(square);
+            go.board_states.push(go.generate_state());
+            go.refresh();
             return;
           }
 
           // Append Stone
-          go.player == 'B' ? go.append_stone('B', square) : go.append_stone('W', square);
+          go.append_stone(square);
 
           // add move to the log
           go.log(square);
-
           go.board_states.push(go.generate_state());
+
+          if (history_changed) {
+            go.refresh();
+          }
 
           // set next player's turn
           go.player = go.player == 'B' ? 'W' : 'B';    
@@ -346,7 +386,7 @@ go.remove_stones = function(group)
 }
 
 
-go.append_stone = function(player, square)
+go.append_stone = function(square)
 {  
   // remove shadow image.
   if(square.getElementsByTagName('img')[0]) {
@@ -358,8 +398,17 @@ go.append_stone = function(player, square)
   var stone = document.createElement('img');
 
   // set image src
-  stone.src = go.img_route;
-  stone.src += player == 'B' ? go.stone.black : go.stone.white;
+  switch (square.state) {
+    case 'B':
+      stone.src = `${go.img_route}${go.stone.black}`;
+    break;
+    case 'W':
+      stone.src = `${go.img_route}${go.stone.white}`;
+    break;
+    case 'Q':
+      stone.src = `${go.img_route}${go.stone.quantum}`;
+    break;
+  }
 
   square.appendChild(stone);
 }
@@ -376,4 +425,18 @@ go.play = function()
   go.add_shadow();
   go.remove_shadow();
   go.move();
+}
+
+go.collapse_quantum_siblings = function(square) {
+  var has_collapsed = false;
+  var siblings = go.get_siblings(square);
+
+  for (var sibling of siblings) {
+    if (sibling.state == 'Q') {
+      sibling.state = Math.random() <= 0.5 ? 'W' : 'B';
+      has_collapsed = true;
+    }
+  }
+
+  return has_collapsed;
 }
